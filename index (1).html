@@ -1,0 +1,421 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Wedding Seating – Faridah & Michael</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;1,400&family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300&display=swap" rel="stylesheet" />
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  :root {
+    --cream: #faf6f0; --warm-white: #fff9f3;
+    --gold: #c9a84c; --gold-light: #e8d5a3; --gold-dark: #9a7a2e;
+    --blush: #e8c4b8; --text: #2a1f1a; --text-light: #6b5a52;
+    --border: rgba(201,168,76,0.3);
+  }
+  body { font-family:'Cormorant Garamond',serif; background:var(--cream); min-height:100vh; color:var(--text); overflow-x:hidden; }
+  body::before {
+    content:''; position:fixed; inset:0; pointer-events:none; z-index:0;
+    background:
+      radial-gradient(ellipse 80% 60% at 20% 10%,rgba(232,197,163,0.18) 0%,transparent 60%),
+      radial-gradient(ellipse 60% 50% at 80% 90%,rgba(138,158,138,0.12) 0%,transparent 55%),
+      radial-gradient(ellipse 50% 40% at 50% 50%,rgba(201,168,76,0.06) 0%,transparent 70%);
+  }
+  .page { position:relative; z-index:1; }
+  header { text-align:center; padding:3rem 2rem 2rem; }
+  .ornament { display:block; font-size:1.4rem; color:var(--gold); letter-spacing:0.5em; margin-bottom:0.5rem; opacity:0.7; }
+  h1 { font-family:'Playfair Display',serif; font-size:clamp(2.2rem,6vw,3.8rem); font-weight:400; letter-spacing:0.04em; line-height:1.15; }
+  h1 em { font-style:italic; color:var(--gold-dark); }
+  .subtitle { margin-top:0.75rem; font-size:1.15rem; color:var(--text-light); font-style:italic; letter-spacing:0.05em; }
+  .divider { display:flex; align-items:center; gap:1rem; max-width:400px; margin:1.5rem auto 0; }
+  .divider::before,.divider::after { content:''; flex:1; height:1px; background:linear-gradient(to right,transparent,var(--gold-light),transparent); }
+  .divider-diamond { width:8px; height:8px; background:var(--gold); transform:rotate(45deg); opacity:0.6; }
+  main { max-width:720px; margin:0 auto; padding:1rem 1.5rem 4rem; }
+  .card {
+    background:var(--warm-white); border:1px solid var(--border); border-radius:2px;
+    padding:2.5rem 3rem;
+    box-shadow:0 2px 20px rgba(42,31,26,0.06),0 0 0 6px rgba(201,168,76,0.04);
+    position:relative; overflow:hidden;
+  }
+  .card::before { content:''; position:absolute; top:0; left:0; right:0; height:3px; background:linear-gradient(90deg,transparent,var(--gold),var(--blush),var(--gold),transparent); }
+  @media(max-width:500px){.card{padding:1.8rem 1.5rem;}}
+
+  /* TABS */
+  .tabs { display:flex; border-bottom:1px solid var(--border); margin-bottom:2rem; }
+  .tab-btn { background:none; border:none; font-family:'Cormorant Garamond',serif; font-size:0.95rem; letter-spacing:0.12em; text-transform:uppercase; color:var(--text-light); padding:0.6rem 1.4rem; cursor:pointer; border-bottom:2px solid transparent; margin-bottom:-1px; transition:all 0.2s; }
+  .tab-btn.active { color:var(--gold-dark); border-bottom-color:var(--gold); }
+  .tab-btn:hover:not(.active) { color:var(--text); }
+  .tab-panel { display:none; }
+  .tab-panel.active { display:block; }
+
+  /* FORM */
+  .form-label { display:block; font-size:0.82rem; letter-spacing:0.14em; text-transform:uppercase; color:var(--text-light); margin-bottom:0.6rem; }
+  .search-wrap { display:flex; gap:0.75rem; align-items:stretch; }
+  input[type="text"] { flex:1; font-family:'Cormorant Garamond',serif; font-size:1.15rem; padding:0.75rem 1rem; border:1px solid var(--border); background:var(--cream); color:var(--text); border-radius:2px; outline:none; transition:border-color 0.2s,box-shadow 0.2s; }
+  input[type="text"]:focus { border-color:var(--gold); box-shadow:0 0 0 3px rgba(201,168,76,0.12); }
+  input[type="text"]::placeholder { color:var(--gold-light); }
+
+  .btn { font-family:'Cormorant Garamond',serif; font-size:0.9rem; letter-spacing:0.1em; text-transform:uppercase; padding:0.75rem 1.6rem; border:1px solid var(--gold); background:var(--gold); color:#fff8ec; border-radius:2px; cursor:pointer; transition:background 0.2s,transform 0.1s; white-space:nowrap; }
+  .btn:hover { background:var(--gold-dark); border-color:var(--gold-dark); }
+  .btn:active { transform:scale(0.98); }
+  .btn-outline { background:transparent; color:var(--gold-dark); }
+  .btn-outline:hover { background:rgba(201,168,76,0.08); }
+  .btn-danger { background:transparent; color:#9a3030; border-color:#9a3030; }
+  .btn-danger:hover { background:rgba(154,48,48,0.08); }
+
+  /* RESULT */
+  #result { margin-top:1.8rem; animation:fadeUp 0.4s ease; }
+  @keyframes fadeUp { from{opacity:0;transform:translateY(10px)} to{opacity:1;transform:translateY(0)} }
+
+  .result-found { text-align:center; padding:2rem 1.5rem; background:linear-gradient(135deg,rgba(201,168,76,0.06),rgba(232,196,184,0.08)); border:1px solid var(--border); border-radius:2px; }
+  .result-found .greeting { font-size:1rem; letter-spacing:0.12em; text-transform:uppercase; color:var(--text-light); margin-bottom:0.3rem; }
+  .result-found .guest-name { font-family:'Playfair Display',serif; font-size:clamp(1.5rem,4vw,2rem); font-style:italic; color:var(--text); margin-bottom:1.2rem; }
+  .seat-cards { display:inline-flex; gap:1rem; flex-wrap:wrap; justify-content:center; }
+  .seat-card { background:var(--warm-white); border:1px solid var(--gold-light); border-radius:2px; padding:1rem 2rem; display:flex; flex-direction:column; align-items:center; gap:0.15rem; min-width:110px; }
+  .seat-card .sc-label { font-size:0.72rem; letter-spacing:0.16em; text-transform:uppercase; color:var(--text-light); }
+  .seat-card .sc-value { font-family:'Playfair Display',serif; font-size:1.9rem; font-weight:600; color:var(--gold-dark); line-height:1.1; }
+  .result-extra { margin-top:1rem; font-size:0.9rem; color:var(--text-light); font-style:italic; }
+  .result-not-found { text-align:center; padding:1.5rem; color:var(--text-light); font-style:italic; font-size:1.05rem; border:1px dashed var(--border); border-radius:2px; }
+
+  /* ADMIN */
+  .admin-intro { font-size:0.95rem; color:var(--text-light); line-height:1.7; margin-bottom:1.2rem; }
+  .admin-intro strong { color:var(--text); }
+  .col-tabs { display:flex; gap:0.5rem; margin-bottom:1rem; flex-wrap:wrap; }
+  .col-tab { font-family:'Cormorant Garamond',serif; font-size:0.9rem; letter-spacing:0.1em; text-transform:uppercase; padding:0.5rem 1.2rem; border:1px solid var(--border); background:transparent; color:var(--text-light); border-radius:2px; cursor:pointer; transition:all 0.2s; }
+  .col-tab.active { background:var(--gold); border-color:var(--gold); color:#fff8ec; }
+  .col-tab:hover:not(.active) { border-color:var(--gold); color:var(--gold-dark); }
+  .col-progress { font-size:0.8rem; color:var(--text-light); font-style:italic; margin-bottom:0.8rem; }
+  .col-progress span { color:var(--gold-dark); font-weight:600; }
+  .seat-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:0.6rem; margin-bottom:1.5rem; }
+  @media(max-width:480px){.seat-grid{grid-template-columns:repeat(2,1fr);}}
+  .seat-input-wrap { display:flex; flex-direction:column; gap:0.25rem; }
+  .seat-input-label { font-size:0.72rem; letter-spacing:0.1em; text-transform:uppercase; color:var(--text-light); }
+  .seat-input { font-family:'Cormorant Garamond',serif; font-size:0.95rem; padding:0.5rem 0.6rem; border:1px solid var(--border); background:var(--cream); color:var(--text); border-radius:2px; outline:none; transition:border-color 0.2s; width:100%; }
+  .seat-input:focus { border-color:var(--gold); }
+  .seat-input.filled { background:rgba(201,168,76,0.06); border-color:rgba(201,168,76,0.4); }
+  .seat-input::placeholder { color:#cdbfa8; font-style:italic; font-size:0.85rem; }
+  .section-head { font-size:0.78rem; letter-spacing:0.14em; text-transform:uppercase; color:var(--text-light); margin:1.5rem 0 0.7rem; padding-bottom:0.4rem; border-bottom:1px solid var(--border); }
+  .all-columns-grid { display:grid; grid-template-columns:repeat(4,1fr); gap:0.5rem; }
+  @media(max-width:560px){.all-columns-grid{grid-template-columns:repeat(2,1fr);}}
+  .col-summary { border:1px solid var(--border); border-radius:2px; overflow:hidden; }
+  .col-summary-head { background:var(--cream); padding:0.4rem 0.7rem; font-size:0.75rem; letter-spacing:0.12em; text-transform:uppercase; color:var(--gold-dark); border-bottom:1px solid var(--border); display:flex; justify-content:space-between; align-items:center; }
+  .col-summary-count { font-size:0.7rem; color:var(--text-light); font-style:italic; text-transform:none; letter-spacing:0; }
+  .col-summary-body { max-height:180px; overflow-y:auto; }
+  .col-summary-row { display:flex; justify-content:space-between; padding:0.3rem 0.7rem; font-size:0.82rem; border-bottom:1px solid rgba(201,168,76,0.08); color:var(--text); }
+  .col-summary-row:last-child { border-bottom:none; }
+  .col-summary-row .sn { color:var(--text-light); font-size:0.75rem; }
+  .col-summary-empty { padding:0.5rem 0.7rem; font-size:0.8rem; color:var(--text-light); font-style:italic; }
+  .actions { display:flex; gap:0.75rem; flex-wrap:wrap; margin-top:1.5rem; }
+
+  /* STATUS */
+  .status { margin-top:1rem; padding:0.8rem 1rem; border-radius:2px; font-size:0.9rem; text-align:center; }
+  .status.success { background:rgba(138,158,138,0.12); border:1px solid rgba(138,158,138,0.3); color:#4a6b4a; }
+  .status.error { background:rgba(200,80,80,0.08); border:1px solid rgba(200,80,80,0.2); color:#9a3030; }
+  .status.info { background:rgba(201,168,76,0.08); border:1px solid rgba(201,168,76,0.3); color:var(--gold-dark); }
+
+  /* SAVING INDICATOR */
+  .save-bar { display:none; align-items:center; gap:0.5rem; font-size:0.8rem; color:var(--gold-dark); font-style:italic; margin-top:0.8rem; }
+  .save-bar.show { display:flex; }
+  .save-dot { width:7px; height:7px; background:var(--gold); border-radius:50%; animation:pulse 1s infinite; }
+  @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.3} }
+
+  /* QR INFO */
+  .qr-info { margin-top:1.5rem; padding:1.2rem 1.5rem; background:rgba(201,168,76,0.06); border:1px solid var(--border); border-radius:2px; }
+  .qr-info-title { font-size:0.78rem; letter-spacing:0.14em; text-transform:uppercase; color:var(--text-light); margin-bottom:0.5rem; }
+  .qr-url { font-family:monospace; font-size:0.82rem; color:var(--gold-dark); word-break:break-all; margin-bottom:0.7rem; }
+  .qr-note { font-size:0.82rem; color:var(--text-light); font-style:italic; line-height:1.5; }
+  .btn-copy { font-family:'Cormorant Garamond',serif; font-size:0.8rem; letter-spacing:0.08em; text-transform:uppercase; padding:0.5rem 1rem; border:1px solid var(--gold); background:transparent; color:var(--gold-dark); border-radius:2px; cursor:pointer; transition:background 0.2s; }
+  .btn-copy:hover { background:rgba(201,168,76,0.1); }
+
+  footer { text-align:center; padding-bottom:2rem; font-size:0.78rem; color:var(--gold-light); letter-spacing:0.1em; text-transform:uppercase; position:relative; z-index:1; }
+</style>
+</head>
+<body>
+<div class="page">
+
+<header>
+  <span class="ornament">✦ ✦ ✦</span>
+  <h1>Find Your <em>Seat</em></h1>
+  <p class="subtitle">Enter your name to discover your seat</p>
+  <div class="divider"><div class="divider-diamond"></div></div>
+</header>
+
+<main>
+  <div class="card">
+    <div class="tabs" id="tabBar">
+      <button class="tab-btn active" onclick="switchTab('guest')">Guest Lookup</button>
+      <button class="tab-btn" id="adminTabBtn" style="display:none" onclick="switchTab('admin')">Admin ⚙</button>
+    </div>
+
+    <!-- GUEST TAB -->
+    <div id="tab-guest" class="tab-panel active">
+      <div id="loadingMsg" style="text-align:center;padding:1rem;color:var(--text-light);font-style:italic">Loading guest list...</div>
+      <div id="guestForm" style="display:none">
+        <label class="form-label" for="nameInput">Your Name</label>
+        <div class="search-wrap">
+          <input type="text" id="nameInput" placeholder="e.g. Tolulope Adeyina" autocomplete="off"
+                 onkeydown="if(event.key==='Enter') findSeat()" />
+          <button class="btn" onclick="findSeat()">Find My Seat</button>
+        </div>
+      </div>
+      <div id="result"></div>
+    </div>
+
+    <!-- ADMIN TAB -->
+    <div id="tab-admin" class="tab-panel">
+      <p class="admin-intro">
+        Changes save <strong>automatically</strong> — guests see updates instantly without any new QR code needed.
+      </p>
+
+      <div class="col-tabs">
+        <button class="col-tab active" onclick="selectCol('A')">Column A</button>
+        <button class="col-tab" onclick="selectCol('B')">Column B</button>
+        <button class="col-tab" onclick="selectCol('C')">Column C</button>
+        <button class="col-tab" onclick="selectCol('D')">Column D</button>
+      </div>
+
+      <div class="col-progress" id="colProgress"></div>
+      <div class="seat-grid" id="seatGrid"></div>
+
+      <div class="save-bar" id="saveBar">
+        <div class="save-dot"></div> Saving changes...
+      </div>
+      <div id="adminStatus"></div>
+
+      <div class="section-head">All Columns Overview</div>
+      <div class="all-columns-grid" id="allColsGrid"></div>
+
+      <div class="actions">
+        <button class="btn btn-danger" onclick="clearAll()">Clear All</button>
+      </div>
+
+      <!-- QR code info -->
+      <div class="qr-info" style="margin-top:1.5rem">
+        <div class="qr-info-title">🔗 Your QR Code URL (use this once — never changes!)</div>
+        <div class="qr-url" id="siteUrl"></div>
+        <p class="qr-note">Generate your QR code from this URL once. All guest list changes you make here save automatically — guests always see the latest data when they scan.</p>
+        <button class="btn-copy" style="margin-top:0.6rem" onclick="copyGuestUrl()">Copy URL</button>
+      </div>
+    </div>
+  </div>
+</main>
+
+<footer>With love &nbsp;✦&nbsp; Faridah & Michael</footer>
+</div>
+
+<script>
+const COLS = ['A','B','C','D'];
+const SEATS = 15;
+const STORAGE_KEY = 'wedding_seats_fm2024';
+
+// Default guest data
+const DEFAULT = {
+  A:{1:'Olatunji Awogbemi',2:'Christine Awogbemi',3:'Babalola Williams',4:'Kemi Olojede',5:'Tolulope Adeyina',6:'Sharon Nwankwo',7:'Baggy',8:"Josh's wifey",9:'Blessing McCray',10:'Ruth Edah',11:'Bolu Papi',12:'Edmund Osuzoka',13:'Arun Verma',14:'Chase',15:''},
+  B:{1:'Olasehinde Omolayo',2:'Priyank',3:'Dayo Ogunleke',4:'Tim Olojede',5:'Dimeji Madandola',6:'Christain Nwankwo',7:"Baggy's Wife",8:'Josh Tutu',9:'Kendall McCray',10:'Gift Edah',11:'Charles',12:'Seun Falaju',13:'Arun Harcharan',14:'Evans',15:''},
+  C:{1:'Aaliyah Koledoye',2:'Jamal Koledoye',3:'Adebola Aguda-Oyedepo',4:'Mathias Oyedepo',5:'Pst Bisi Oluwatoyin',6:'Pst Margaret Okooboh',7:'Sis Olamide Abolurin',8:'Tobi Sonde',9:'Debo Olanrewaju',10:'Gift Nwosu',11:'Seyi Akogun',12:'Lina Tayem',13:'Adeola Adeniran',14:'',15:'AJ'},
+  D:{1:'Dami Oke',2:'Jide Oke',3:'Uncle Ayo',4:'Mummy Muyiwa',5:'Pastor Toyin Enigbokan',6:'Pastor Femi Enigbokan',7:'Pst Matthew Abolurin',8:'Omo-olorun Sonde',9:'Teni Olanrewaju',10:'Ose Okooboh',11:'Emma Carzim',12:'Alexandra Akpabio',13:'Folake Sanni',14:'Mide',15:'Temi'}
+};
+
+let seats = {};
+let currentCol = 'A';
+let saveTimer = null;
+let isAdmin = false;
+
+// ── INIT ──
+(function init() {
+  isAdmin = location.search.includes('admin');
+  if (isAdmin) document.getElementById('adminTabBtn').style.display = 'block';
+
+  // Set QR URL display
+  const baseUrl = location.origin + location.pathname;
+  document.getElementById('siteUrl').textContent = baseUrl;
+
+  loadSeats();
+})();
+
+// ── LOAD from localStorage ──
+function loadSeats() {
+  try {
+    const saved = localStorage.getItem(STORAGE_KEY);
+    if (saved) {
+      seats = JSON.parse(saved);
+    } else {
+      // First time — load defaults and save
+      seats = JSON.parse(JSON.stringify(DEFAULT));
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(seats));
+    }
+  } catch(e) {
+    seats = JSON.parse(JSON.stringify(DEFAULT));
+  }
+
+  // Ensure all seats exist
+  COLS.forEach(c => {
+    if (!seats[c]) seats[c] = {};
+    for(let s=1;s<=SEATS;s++) {
+      if(seats[c][s] === undefined) seats[c][s] = '';
+    }
+  });
+
+  document.getElementById('loadingMsg').style.display = 'none';
+  document.getElementById('guestForm').style.display = 'block';
+  if (isAdmin) { renderGrid(); renderAllCols(); updateProgress(); }
+}
+
+// ── SAVE to localStorage ──
+function saveSeats() {
+  const bar = document.getElementById('saveBar');
+  bar.classList.add('show');
+  clearTimeout(saveTimer);
+  saveTimer = setTimeout(() => {
+    try {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(seats));
+      bar.classList.remove('show');
+      document.getElementById('adminStatus').innerHTML =
+        '<div class="status success">✓ Saved! Guests will see changes immediately.</div>';
+      setTimeout(() => document.getElementById('adminStatus').innerHTML = '', 3000);
+    } catch(e) {
+      bar.classList.remove('show');
+      document.getElementById('adminStatus').innerHTML =
+        '<div class="status error">Could not save. Storage may be full.</div>';
+    }
+  }, 800);
+}
+
+// ── TABS ──
+function switchTab(tab) {
+  document.querySelectorAll('.tab-btn').forEach((b,i) => b.classList.toggle('active', ['guest','admin'][i]===tab));
+  document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+  document.getElementById('tab-'+tab).classList.add('active');
+}
+
+// ── COLUMN SELECTION ──
+function selectCol(col) {
+  currentCol = col;
+  document.querySelectorAll('.col-tab').forEach((b,i) => b.classList.toggle('active', COLS[i]===col));
+  renderGrid(); updateProgress();
+}
+
+function updateProgress() {
+  const filled = Object.values(seats[currentCol]).filter(v=>v.trim()).length;
+  document.getElementById('colProgress').innerHTML =
+    `Column ${currentCol} — <span>${filled}</span> of ${SEATS} seats filled`;
+}
+
+function renderGrid() {
+  const grid = document.getElementById('seatGrid');
+  grid.innerHTML = '';
+  for(let s=1;s<=SEATS;s++) {
+    const val = seats[currentCol][s] || '';
+    const wrap = document.createElement('div');
+    wrap.className = 'seat-input-wrap';
+    wrap.innerHTML = `
+      <span class="seat-input-label">Seat ${s}</span>
+      <input class="seat-input${val?' filled':''}" type="text"
+             placeholder="Guest name" value="${escAttr(val)}"
+             data-seat="${s}"
+             onchange="updateSeat(this)"
+             oninput="this.classList.toggle('filled',this.value.trim().length>0)" />`;
+    grid.appendChild(wrap);
+  }
+}
+
+function updateSeat(input) {
+  seats[currentCol][parseInt(input.dataset.seat)] = input.value.trim();
+  renderAllCols(); updateProgress(); saveSeats();
+}
+
+function renderAllCols() {
+  const grid = document.getElementById('allColsGrid');
+  grid.innerHTML = '';
+  COLS.forEach(col => {
+    const filled = Object.values(seats[col]).filter(v=>v.trim()).length;
+    let rows = '';
+    for(let s=1;s<=SEATS;s++) {
+      const name = seats[col][s];
+      if(name) rows += `<div class="col-summary-row"><span>${escHtml(name)}</span><span class="sn">S${s}</span></div>`;
+    }
+    if(!rows) rows = `<div class="col-summary-empty">No guests yet</div>`;
+    const div = document.createElement('div');
+    div.className = 'col-summary';
+    div.innerHTML = `
+      <div class="col-summary-head">Column ${col}<span class="col-summary-count">${filled}/${SEATS}</span></div>
+      <div class="col-summary-body">${rows}</div>`;
+    grid.appendChild(div);
+  });
+}
+
+// ── FIND SEAT ──
+function findSeat() {
+  const query = document.getElementById('nameInput').value.trim().toLowerCase();
+  const el = document.getElementById('result');
+  if(!query) { el.innerHTML=''; return; }
+
+  const total = COLS.flatMap(c=>Object.values(seats[c])).filter(v=>v.trim()).length;
+  if(!total) {
+    el.innerHTML = `<div class="result-not-found">Guest list not available yet. Please try again shortly.</div>`;
+    return;
+  }
+
+  let match = null;
+  const strategies = [(n,q)=>n===q, (n,q)=>n.startsWith(q), (n,q)=>n.includes(q)];
+
+  for(const strat of strategies) {
+    if(match) break;
+    for(const col of COLS) {
+      if(match) break;
+      for(let s=1;s<=SEATS;s++) {
+        const n = seats[col][s].trim().toLowerCase();
+        if(n && strat(n,query)) { match={col,seat:s,name:seats[col][s]}; break; }
+      }
+    }
+  }
+
+  if(match) {
+    el.innerHTML = `
+      <div class="result-found">
+        <div class="greeting">Welcome,</div>
+        <div class="guest-name">${escHtml(match.name)}</div>
+        <div class="seat-cards">
+          <div class="seat-card"><span class="sc-label">Column</span><span class="sc-value">${escHtml(match.col)}</span></div>
+          <div class="seat-card"><span class="sc-label">Seat</span><span class="sc-value">${match.seat}</span></div>
+        </div>
+        <div class="result-extra">We're so glad you're here 🌿</div>
+      </div>`;
+  } else {
+    el.innerHTML = `<div class="result-not-found">We couldn't find "<em>${escHtml(query)}</em>" — try a different spelling or ask the host.</div>`;
+  }
+}
+
+// ── COPY GUEST URL ──
+function copyGuestUrl() {
+  const url = location.origin + location.pathname;
+  const btn = event.target;
+  if(navigator.clipboard && navigator.clipboard.writeText) {
+    navigator.clipboard.writeText(url).then(()=>{ btn.textContent='Copied!'; setTimeout(()=>btn.textContent='Copy URL',2000); }).catch(()=>fallbackCopy(url,btn));
+  } else { fallbackCopy(url,btn); }
+}
+
+function fallbackCopy(text,btn) {
+  const ta = document.createElement('textarea');
+  ta.value = text;
+  ta.style.cssText = 'position:fixed;top:0;left:0;opacity:0;pointer-events:none';
+  document.body.appendChild(ta); ta.focus(); ta.select();
+  try { document.execCommand('copy'); btn.textContent='Copied!'; setTimeout(()=>btn.textContent='Copy URL',2000); }
+  catch(e) { btn.textContent='Select & copy manually!'; }
+  document.body.removeChild(ta);
+}
+
+// ── CLEAR ALL ──
+function clearAll() {
+  if(!confirm('Clear ALL guest assignments? This cannot be undone.')) return;
+  COLS.forEach(c=>{for(let s=1;s<=SEATS;s++) seats[c][s]='';});
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(seats));
+  renderGrid(); renderAllCols(); updateProgress();
+  document.getElementById('adminStatus').innerHTML = '<div class="status info">All seats cleared.</div>';
+}
+
+function escHtml(s){return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
+function escAttr(s){return escHtml(s);}
+</script>
+</body>
+</html>
