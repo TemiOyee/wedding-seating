@@ -125,6 +125,40 @@
   @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.3} }
 
   footer { text-align:center; padding-bottom:2rem; font-size:0.78rem; color:var(--gold-light); letter-spacing:0.1em; text-transform:uppercase; position:relative; z-index:1; }
+
+  /* CHART */
+  .chart-wrap { margin-top:1.5rem; animation:fadeUp 0.4s ease; }
+  .chart-title { font-size:0.82rem; letter-spacing:0.14em; text-transform:uppercase; color:var(--text-light); text-align:center; margin-bottom:1rem; }
+  .chart-room { background:var(--cream); border:1px solid var(--border); border-radius:2px; padding:1rem; overflow-x:auto; }
+  .chart-top-label { text-align:center; font-size:0.82rem; color:var(--gold-dark); font-style:italic; margin-bottom:0.8rem; letter-spacing:0.04em; }
+  .chart-bottom-label { text-align:center; font-size:0.82rem; color:var(--text-light); font-style:italic; margin-top:0.8rem; }
+  .chart-grid { display:inline-block; min-width:100%; }
+  .chart-header, .chart-row { display:flex; gap:4px; margin-bottom:4px; align-items:center; }
+  .chart-seat-num { width:20px; font-size:0.65rem; color:var(--text-light); text-align:right; flex-shrink:0; }
+  .chart-col-label { flex:1; text-align:center; font-size:0.78rem; letter-spacing:0.1em; text-transform:uppercase; color:var(--text-light); padding:0.3rem 0; font-family:'Playfair Display',serif; }
+  .chart-col-label.active { color:var(--gold-dark); font-weight:600; }
+  .chart-seat { flex:1; height:28px; border-radius:2px; border:1px solid rgba(201,168,76,0.2); background:var(--warm-white); display:flex; align-items:center; justify-content:center; font-size:0.68rem; color:var(--text-light); transition:all 0.2s; min-width:36px; }
+  .chart-seat.highlight { background:rgba(201,168,76,0.12); border-color:rgba(201,168,76,0.4); color:var(--gold-dark); }
+  .chart-seat.match { background:var(--gold); border-color:var(--gold-dark); color:#fff; font-weight:700; transform:scale(1.08); box-shadow:0 2px 8px rgba(201,168,76,0.4); }
+  .chart-you { font-size:0.6rem; letter-spacing:0.05em; }
+  .chart-legend { display:flex; gap:1.2rem; justify-content:center; margin-top:0.8rem; }
+  .legend-item { display:flex; align-items:center; gap:0.4rem; font-size:0.78rem; color:var(--text-light); }
+  .legend-dot { width:12px; height:12px; border-radius:2px; }
+  .legend-dot.match { background:var(--gold); }
+  .legend-dot.highlight { background:rgba(201,168,76,0.12); border:1px solid rgba(201,168,76,0.4); }
+  .chart-instructions { margin-top:1rem; padding:0.9rem 1.2rem; background:rgba(201,168,76,0.06); border:1px solid var(--border); border-radius:2px; font-size:0.88rem; color:var(--text-light); line-height:1.6; text-align:center; }
+  .chart-instructions strong { color:var(--text); }
+
+  /* MULTIPLE RESULTS */
+  .multi-wrap { margin-top:0.5rem; border:1px solid var(--border); border-radius:2px; overflow:hidden; }
+  .multi-title { padding:0.8rem 1rem; font-size:0.82rem; letter-spacing:0.08em; text-transform:uppercase; color:var(--text-light); background:var(--cream); border-bottom:1px solid var(--border); }
+  .multi-item { display:flex; align-items:center; gap:0.8rem; padding:0.9rem 1rem; border-bottom:1px solid rgba(201,168,76,0.1); cursor:pointer; transition:background 0.15s; background:var(--warm-white); }
+  .multi-item:last-child { border-bottom:none; }
+  .multi-item:hover { background:rgba(201,168,76,0.06); }
+  .multi-item:active { background:rgba(201,168,76,0.12); }
+  .multi-name { font-family:'Playfair Display',serif; font-size:1.05rem; font-style:italic; color:var(--text); flex:1; }
+  .multi-seat { font-size:0.8rem; color:var(--gold-dark); letter-spacing:0.06em; white-space:nowrap; }
+  .multi-arrow { color:var(--gold); font-size:1rem; }
 </style>
 </head>
 <body>
@@ -373,21 +407,20 @@ function findSeat() {
     return;
   }
 
-  let match = null;
-  const strategies = [(n,q)=>n===q, (n,q)=>n.startsWith(q), (n,q)=>n.includes(q)];
-
-  for(const strat of strategies) {
-    if(match) break;
-    for(const col of COLS) {
-      if(match) break;
-      for(let s=1; s<=SEATS; s++) {
-        const n = (seats[col][s]||'').trim().toLowerCase();
-        if(n && strat(n, query)) { match={col, seat:s, name:seats[col][s]}; break; }
-      }
+  // Collect ALL matches that include the query
+  let matches = [];
+  for(const col of COLS) {
+    for(let s=1; s<=SEATS; s++) {
+      const n = (seats[col][s]||'').trim().toLowerCase();
+      if(n && n.includes(query)) matches.push({col, seat:s, name:seats[col][s]});
     }
   }
 
-  if(match) {
+  if(matches.length === 0) {
+    el.innerHTML = `<div class="result-not-found">We couldn't find "<em>${escHtml(query)}</em>" — try a different spelling or ask the host.</div>`;
+  } else if(matches.length === 1) {
+    // Single match — show full result + chart
+    const match = matches[0];
     el.innerHTML = `
       <div class="result-found">
         <div class="greeting">Welcome,</div>
@@ -397,10 +430,85 @@ function findSeat() {
           <div class="seat-card"><span class="sc-label">Seat</span><span class="sc-value">${match.seat}</span></div>
         </div>
         <div class="result-extra">We're so glad you're here 🌿</div>
-      </div>`;
+      </div>
+      ${buildChart(match.col, match.seat)}`;
   } else {
-    el.innerHTML = `<div class="result-not-found">We couldn't find "<em>${escHtml(query)}</em>" — try a different spelling or ask the host.</div>`;
+    // Multiple matches — list all, let them tap their name
+    const items = matches.map(m => `
+      <div class="multi-item" onclick="showSingleResult('${escAttr(m.name)}','${m.col}',${m.seat})">
+        <div class="multi-name">${escHtml(m.name)}</div>
+        <div class="multi-seat">Column ${escHtml(m.col)} · Seat ${m.seat}</div>
+        <div class="multi-arrow">→</div>
+      </div>`).join('');
+
+    el.innerHTML = `
+      <div class="multi-wrap">
+        <div class="multi-title">We found ${matches.length} guests — tap your name:</div>
+        ${items}
+      </div>`;
   }
+}
+
+function showSingleResult(name, col, seat) {
+  const el = document.getElementById('result');
+  const colIndex = COLS.indexOf(col);
+  el.innerHTML = `
+    <div class="result-found">
+      <div class="greeting">Welcome,</div>
+      <div class="guest-name">${escHtml(name)}</div>
+      <div class="seat-cards">
+        <div class="seat-card"><span class="sc-label">Column</span><span class="sc-value">${escHtml(col)}</span></div>
+        <div class="seat-card"><span class="sc-label">Seat</span><span class="sc-value">${seat}</span></div>
+      </div>
+      <div class="result-extra">We're so glad you're here 🌿</div>
+    </div>
+    ${buildChart(col, parseInt(seat))}
+    <button class="btn btn-outline" style="margin-top:1rem;width:100%" onclick="findSeat()">← Back to results</button>`;
+}
+
+function buildChart(matchCol, matchSeat) {
+  const colIndex = COLS.indexOf(matchCol); // 0=A,1=B,2=C,3=D
+
+  // Build column headers
+  let headerCells = COLS.map((c,i) => `<div class="chart-col-label${i===colIndex?' active':''}">${c}</div>`).join('');
+
+  // Build seat rows
+  let rows = '';
+  for(let s=1; s<=SEATS; s++) {
+    let cells = COLS.map((c,i) => {
+      const isMatch = i===colIndex && s===matchSeat;
+      const isCol = i===colIndex && s!==matchSeat;
+      return `<div class="chart-seat${isMatch?' match':isCol?' highlight':''}">
+        ${isMatch ? `<span class="chart-you">YOU</span>` : s}
+      </div>`;
+    }).join('');
+    rows += `<div class="chart-row"><div class="chart-seat-num">${s}</div>${cells}</div>`;
+  }
+
+  return `
+    <div class="chart-wrap">
+      <div class="chart-title">📍 Your Location in the Room</div>
+      <div class="chart-room">
+        <div class="chart-top-label">🌸 Couple's Table — Front of Room 🌸</div>
+        <div class="chart-grid">
+          <div class="chart-header">
+            <div class="chart-seat-num"></div>
+            ${headerCells}
+          </div>
+          ${rows}
+        </div>
+        <div class="chart-bottom-label">⬇ Entrance</div>
+      </div>
+      <div class="chart-legend">
+        <div class="legend-item"><div class="legend-dot match"></div> Your seat</div>
+        <div class="legend-item"><div class="legend-dot highlight"></div> Your column</div>
+      </div>
+      <div class="chart-instructions">
+        Head to <strong>Column ${matchCol}</strong> (${colIndex===0?'far left':colIndex===1?'second from left':colIndex===2?'second from right':'far right'}) —
+        <strong>Seat ${matchSeat}</strong> from the front
+        or <strong>Seat ${SEATS - matchSeat + 1}</strong> from the back (entrance).
+      </div>
+    </div>`;
 }
 
 function escHtml(s){return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
